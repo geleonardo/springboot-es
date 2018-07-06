@@ -1,0 +1,104 @@
+#es 脚本操作指南(es kinaba Dev Tools console operation guide)
+
+#新增修改数据  insert or update data by _id
+#                  索引/type/id
+PUT student_test_index/user/1
+{
+  "name": "ge",
+  "sex": 0,
+  "age": 18
+}
+
+#删除索引 （谨慎操作 ）  delete index,if done all data in the index will be removed
+#      indexname(example:student_test_index)
+DELETE index
+
+#查询所有 索引    get index infos
+GET /_cat/indices?v
+
+#查询某个数据 （id查询 ）  get info by _id
+GET student_test_index/user/2
+
+
+#查询所有数据       get all data of one index
+POST /student_test_index/user/_search?pretty
+{"query": { "match_all": {}}}
+
+#根据 id删除数据    delete data by index _id
+DELETE  /student_test_index/user/1
+
+
+#分页查询所有   query by page
+POST /student_test_index/user/_search?pretty
+{
+    "from" : 0, "size" : 10,
+    "query" : {
+         "match_all": {}
+    }
+}
+
+
+#创建索引     create one index
+PUT /student_test_index_new
+        {
+            "settings": {
+            "number_of_shards" :   5,
+            "number_of_replicas" : 1
+            }
+
+        }
+
+
+
+#创建索引模板 (类似建表 )   create one index mapper
+PUT /student_test_index_new/user_new/_mapping?pretty
+{
+    "user_new": {
+        "properties": {
+            "name": {
+                "type": "text",
+                "store": "true"
+            },
+            "sex": {
+                "type": "integer",
+                "index": "true"
+            },
+            "age": {
+                "type": "integer",
+                "index": "true"
+            },
+            "height": {
+                "type": "integer",
+                "index": "true"
+            },
+            "@timestamp": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+            }
+        }
+    }
+}
+
+
+#条件查询   search with terms
+POST /zhihuishu_student_listen_and_read/search_list/_search?pretty
+{
+  "from": 0,
+  "size": 20,
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "speaker": "杨光辉胡春阳" }},
+                { "match": { "audioName": "杨光辉胡春阳" }},
+                { "match": { "speakerSchool": "杨光辉胡春阳" }}
+            ]
+        }
+    }
+}
+
+
+#根据id查询   get data by ids
+GET /student_test_index_new/user_new/_mget
+{
+  "ids" : [ "2", "1" ]
+}
