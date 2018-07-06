@@ -1,5 +1,5 @@
 #es 脚本操作指南(es kinaba Dev Tools console operation guide)
-
+ 
 #新增修改数据  insert or update data by _id
 #                  索引/type/id
 PUT student_test_index/user/1
