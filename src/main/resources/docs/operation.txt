@@ -1,0 +1,182 @@
+#新增修改数据   索引      type  id
+PUT student_test_index/user/1
+{
+  "name": "ge",
+  "sex": 0,
+  "age": 18
+}
+
+#删除索引 （谨慎操作 ）
+DELETE index
+
+DELETE student_test_index_new
+
+#查询所有 索引
+GET /_cat/indices?v
+
+#新增修改数据
+PUT /student_test_index/user/2?pretty
+{"name":"ge2",  "sex": 1,  "age": 28}
+
+#查询某个数据 （id查询 ）
+GET student_test_index/user/2
+
+#查询所有数据
+POST /student_test_index/user/_search?pretty
+{"query": { "match_all": {}}}
+
+#根据 id删除数据
+DELETE  /student_test_index/user/1
+
+#分页查询所有
+POST /student_test_index/user/_search?pretty
+{
+    "from" : 0, "size" : 10,
+    "query" : {
+         "match_all": {}
+    }
+}
+
+#分页查询 name 关键字匹配
+POST /student_test_index/user/_search?pretty
+{
+    "from" : 0, "size" : 10,
+    "query" : {
+         "term" : { "name" : "ge" }
+    }
+}
+
+#创建索引
+PUT /student_test_index_new
+        {
+            "settings": {
+            "number_of_shards" :   5,
+            "number_of_replicas" : 1
+            }
+
+        }
+
+PUT /student_test_index_new/_settings
+        {
+            "number_of_replicas": 1
+
+        }
+
+PUT /student_test_index_new/_settings
+        {
+            "number_of_shards": 5
+
+        }
+
+
+#创建索引模板 (类似建表 )
+PUT /student_test_index_new/user_new/_mapping?pretty
+{
+    "user_new": {
+        "properties": {
+            "name": {
+                "type": "text",
+                "store": "true"
+            },
+            "sex": {
+                "type": "integer",
+                "index": "true"
+            },
+            "age": {
+                "type": "integer",
+                "index": "true"
+            },
+            "height": {
+                "type": "integer",
+                "index": "true"
+            },
+            "@timestamp": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+            }
+        }
+    }
+}
+
+#新增修改数据
+PUT /student_test_index_new/user_new/2?pretty
+{
+    "name": "gxk",
+    "sex": 1,
+    "age": 19,
+    "height": 188,
+    "@timestamp": 1528806587222
+}
+
+#新增修改数据
+PUT /student_test_index_new/user_new/6?pretty
+{
+    "name": "ddd abc def ",
+    "desc": "good boy ",
+    "sex": 1,
+    "age": 19,
+    "height": 188,
+    "@timestamp": 1528806587222
+}
+
+
+#查询所有数据
+POST /student_test_index_new/user_new/_search?pretty
+{"query": { "match_all": {}}}
+
+
+
+#查询所有数据
+POST /student_test_index_new/user_new/_search?pretty
+{
+    "query": {
+        "match":{"name":"gxk"}
+    },
+    "highlight": {
+        "fields": {
+            "name": {}
+        }
+    }
+}
+
+
+
+
+
+#分页查询 name 关键字匹配
+POST /student_test_index_new/user_new/_search?pretty
+{
+    "from" : 0, "size" : 10,
+    "query" : {
+         "term" : { "name" : "gxk def" }
+    }
+}
+
+
+
+#分页查询 name 关键字匹配
+POST /student_test_index_new/user_new/_search?pretty
+{
+    "from": 0,
+    "size": 10,
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "match": {
+                        "name": "gxk def"
+                    }
+                }
+            ]
+        }
+    }
+}
+
+
+
+
+
+POST /student_test_index_new/user_new/_search?q=name:gxk def
+
+
+
